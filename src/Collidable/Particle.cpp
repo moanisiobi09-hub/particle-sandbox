@@ -1,68 +1,50 @@
 #include "Particle.hpp"
+#include <iostream>
 
-sf::CircleShape Particle::create() const
+Particle::Particle()
 {
-    sf::CircleShape figure(radius);
-    figure.setOrigin(figure.getGeometricCenter());
+    movedThisFrame = false;
+    color = sf::Color({(uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255)});
+    velocity = sf::Vector2i({(rand() % 10) - 5, (rand() % 10) - 5});
+}
+
+sf::CircleShape Particle::create(sf::Vector2i position) const
+{
+    sf::CircleShape figure = sf::CircleShape(RADIUS);
     figure.setFillColor(color);
+
+    sf::Vector2f precise = sf::Vector2f({(float)position.x, (float)position.y});
+    figure.setPosition(precise);
+    
     return figure;
 }
 
-void Particle::draw(sf::RenderTarget &target, sf::RenderStates states) const
+void Particle::collideWith(Particle &particle)
 {
-    sf::CircleShape figure = create();
-    states.transform = getTransform();
-    target.draw(figure, states);
+    sf::Vector2i currentVel = particle.getVelocity();
+
+    currentVel.x += velocity.x;
+    currentVel.y += velocity.y;
+
+    particle.setVelocity(currentVel);
 }
 
-Particle::Particle(sf::Vector2i position)
+sf::Vector2i Particle::getVelocity() const
 {
-    isStationary = false;
-    velocity = sf::Vector2f({((float)(rand() % 100)) / 10 - 5, 0.0f});
-    color = sf::Color({(uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255)});
-    setPosition({(float)position.x, (float)position.y});
+    return velocity;
 }
 
-void Particle::fall()
+void Particle::setVelocity(sf::Vector2i change)
 {
-    // add to the velocity (accelerate)
-    velocity.y += gravity;
-    // add to the position
-    move({velocity.x, velocity.y});
+    velocity = change;
 }
 
-sf::FloatRect Particle::getBounds() const
+bool Particle::getMovedThisFrame() const
 {
-    float x = getPosition().x, y = getPosition().y;
-    sf::FloatRect box = sf::FloatRect({x - radius, y - radius}, {2 * radius, 2 * radius});
-    return box;
+    return movedThisFrame;
 }
 
-void Particle::fallOn(float y)
+void Particle::setMovedThisFrame(bool change)
 {
-    setPosition({getPosition().x, y - radius});
-    isStationary = true;
-}
-
-bool Particle::hitParticle(const Particle &other) const
-{
-    sf::FloatRect box = getBounds();
-    sf::FloatRect otherBox = other.getBounds();
-    if (const std::optional<sf::FloatRect> intersect = box.findIntersection(otherBox)) return true;
-    return false;
-}
-
-bool Particle::getIsStationary() const
-{
-    return isStationary;
-}
-
-void Particle::setIsStationary(bool change)
-{
-    isStationary = change;
-}
-
-float Particle::getRadius() const
-{
-    return radius;
+    movedThisFrame = change;
 }
