@@ -33,26 +33,36 @@ void ParticleArray::checkCollisions()
         {
             if (std::optional<Particle> &particle = screen.at(row).at(col))
             {
-                // check a square with length of the
+                // check a square with lengths larger than the
                 // diameter of this particle (respect bounds)
-                for (int i = std::max(row - (int)(*particle).RADIUS, 0); i < std::min(row + (int)(*particle).RADIUS, (int)screen.size()); i++)
+                for (int i = std::max(row - (int)((*particle).RADIUS * 3), 0); i < std::min(row + (int)((*particle).RADIUS * 3), (int)screen.size()); i++)
                 {
-                    for (int j = std::max(col - (int)(*particle).RADIUS, 0); j < std::min(col + (int)(*particle).RADIUS, (int)screen.size()); j++)
+                    for (int j = std::max(col - (int)((*particle).RADIUS * 3), 0); j < std::min(col + (int)((*particle).RADIUS * 3), (int)screen.size()); j++)
                     {
-                        // if there is a particle here, there must be a collision.
+                        // if the center of a particle is within there
+                        // bounds check if the sum of the particles' radii
+                        // is less than their distance
                         if (std::optional<Particle> &other = screen.at(i).at(j))
                         {
-                            if (&other != &particle)
-                            {
-                                (*particle).collideWith((*other));
-                                std::cerr << "THERE HAS BEEN A COLLISION" << std::endl;
-                            }
+                            if (&other != &particle && collides({row, col}, {i, j})) (*particle).collideWith((*other));
                         }
                     }
                 }
             }
         }
     }
+}
+
+bool ParticleArray::collides(sf::Vector2i pos1, sf::Vector2i pos2) const
+{
+    const Particle &first = screen.at(pos1.x).at(pos1.y).value();
+    const Particle &second = screen.at(pos2.x).at(pos2.y).value();
+
+    int dx = pos1.x - pos2.x;
+    int dy = pos1.y - pos2.y;
+    int radiusSum = first.RADIUS + second.RADIUS;
+
+    return (dx * dx + dy * dy) < (radiusSum * radiusSum);
 }
 
 void ParticleArray::moveParticles()
