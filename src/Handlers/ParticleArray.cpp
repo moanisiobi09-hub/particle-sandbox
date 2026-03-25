@@ -84,7 +84,7 @@ void ParticleArray::moveParticles()
                     sf::Vector2i velocity = (*particle).getVelocity();
                     try {screen.at(row + velocity.y).at(col + velocity.x) = particle;}
                     catch (std::out_of_range) {}
-                    screen.at(row).at(col) = std::nullopt;
+                    if (!(velocity.x == 0 && velocity.y == 0)) screen.at(row).at(col) = std::nullopt;
                 }
             }
         }
