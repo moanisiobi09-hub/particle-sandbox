@@ -1,9 +1,9 @@
 #include "Particle.hpp"
 #include <iostream>
 
-Particle::Particle()
+Particle::Particle(int index)
 {
-    movedThisFrame = false;
+    masterIndex = index;
     color = sf::Color({(uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255)});
     velocity = sf::Vector2i({(rand() % 10) - 5, (rand() % 10) - 5});
 }
@@ -15,6 +15,7 @@ sf::CircleShape Particle::create(sf::Vector2i position) const
 
     sf::Vector2f precise = sf::Vector2f({(float)position.x, (float)position.y});
     figure.setPosition(precise);
+    figure.setOrigin(figure.getGeometricCenter());
     
     return figure;
 }
@@ -39,12 +40,22 @@ void Particle::setVelocity(sf::Vector2i change)
     velocity = change;
 }
 
-bool Particle::getMovedThisFrame() const
+int Particle::getMasterIndex() const
 {
-    return movedThisFrame;
+    return masterIndex;
 }
 
-void Particle::setMovedThisFrame(bool change)
+void Particle::setMasterIndex(int change)
 {
-    movedThisFrame = change;
+    masterIndex = change;
+}
+
+sf::Vector2i Particle::getPosition() const
+{
+    return position;
+}
+
+void Particle::setPosition(sf::Vector2i change)
+{
+    position = change;
 }
