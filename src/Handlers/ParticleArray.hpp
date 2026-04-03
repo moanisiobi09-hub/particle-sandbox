@@ -14,8 +14,8 @@ class ParticleArray
 {
     private:
         std::vector<std::shared_ptr<Particle>> particlePtrs;
-        std::vector<std::vector<std::shared_ptr<Particle>>> screen;
     public:
+        std::vector<std::vector<std::shared_ptr<Particle>>> screen;
         ParticleArray();
         void drawParticles(sf::RenderTarget &target) const; // take all the particles as they are currently stored and draw them to the screen
         void checkCollisions(); // find any collisions that will occur given the current state and call each particle's collide function.

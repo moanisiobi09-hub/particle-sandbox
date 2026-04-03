@@ -25,6 +25,7 @@ class Particle
         void setMasterIndex(int change);
         sf::Vector2i getPosition() const; // returns the position of this particle on screen IN {X, Y} FORMAT
         void setPosition(sf::Vector2i change);
+        void push(sf::Vector2i force); // add the force vector to the current velocity
 };
 
 

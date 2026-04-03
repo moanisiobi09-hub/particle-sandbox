@@ -59,3 +59,9 @@ void Particle::setPosition(sf::Vector2i change)
 {
     position = change;
 }
+
+void Particle::push(sf::Vector2i force)
+{
+    velocity.x += force.x;
+    velocity.y += force.y;
+}
