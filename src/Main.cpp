@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Handlers/ParticleArray.hpp"
-#include "Collidable/Fan.hpp"
+#include "Handlers/FanList.hpp"
 #include "Config/FrameCounter.hpp"
 #include "Config/Constants.hpp"
 #include <iostream>
@@ -14,7 +14,7 @@ int main()
 
     FrameCounter fpsTracker;
 
-    std::vector<Fan> allFans;
+    FanList fanList;
 
     ParticleArray particleArray;
 
@@ -31,11 +31,7 @@ int main()
             if (const sf::Event::MouseButtonPressed* mousePress = event->getIf<sf::Event::MouseButtonPressed>()) 
             {
                 // when the user right-clicks on the screen, spawn a wind emitter
-                if (mousePress->button == sf::Mouse::Button::Right)
-                {
-                    if (allFans.size() == 0 || !allFans.back().getShowMarker()) allFans.push_back(Fan(mPos)); // if the last fan is fully initialized, add another one
-                    else allFans.back().init(mPos); // otherwise, use the mouse position to initialize the last one added
-                }
+                if (mousePress->button == sf::Mouse::Button::Right) fanList.addFan(mPos);
                 // when the user left-clicks on the screen, spawn a particle
                 if (mousePress->button == sf::Mouse::Button::Left) particleArray.addParticle(mPos); 
             }
@@ -43,7 +39,7 @@ int main()
             if (const sf::Event::KeyPressed* keyPress = event->getIf<sf::Event::KeyPressed>())
             {
                 // when the user presses ctrl + z remove the last placed wind emitter
-                if (keyPress->code == sf::Keyboard::Key::Z && keyPress->control && !allFans.empty()) allFans.pop_back(); 
+                if (keyPress->code == sf::Keyboard::Key::Z && keyPress->control) fanList.popFan();
             }
         }
 
@@ -55,11 +51,9 @@ int main()
 
         particleArray.drawParticles(window);
 
-        for (Fan& fan : allFans) 
-        {
-            fan.applyForce(particleArray);
-            window.draw(fan);
-        }
+        fanList.applyForce(particleArray);
+
+        fanList.drawFans(window);
 
         fpsTracker.addFrame();
         window.draw(fpsTracker);

@@ -5,6 +5,7 @@
 
 #include <SFML\Graphics.hpp>
 #include "..\Handlers\ParticleArray.hpp"
+#include "..\Config\PureFunctions.hpp"
 #include <iostream>
 #include <cmath>
 #include <tuple>
@@ -41,7 +42,7 @@ class Fan : public sf::Drawable, public sf::Transformable
         Fan(sf::Vector2i knob1Pos);
         bool getShowMarker() const;
         // apply this fan's force vector to all the particles in its region. return how many particles were affected
-        int applyForce(ParticleArray &array);
+        int applyForce(ParticleArray &array) const;
 };
 
 #endif

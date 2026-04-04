@@ -98,13 +98,7 @@ void Fan::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 float Fan::findLineX(sf::Vector2f pointA, sf::Vector2f pointB, float y) const
 {
-    // find the slope of the line segment
-    float slope = (pointA.y - pointB.y) / (pointA.x - pointB.x);
-    // if the slope is 0 (horizontal line)
-    if (slope == 0) return pointA.x;
-    // use that slope do determine what the x must be
-    float result = (y - pointA.y) / slope + pointA.x;
-    return result;
+    return (pm::findXOnLine({pointA.x, pointA.y}, {pointB.x, pointB.y}, y));
 }
 
 sf::Vector2i Fan::findForceVector()
@@ -162,7 +156,7 @@ bool Fan::getShowMarker() const
     return showMarker;
 }
 
-int Fan::applyForce(ParticleArray &array)
+int Fan::applyForce(ParticleArray &array) const
 {
     int affectedCount = 0;
     // define lambda functions to tell where the x would be for each segment at a given y
