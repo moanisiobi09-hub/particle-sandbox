@@ -118,7 +118,6 @@ sf::Vector2i Fan::findForceVector()
     // dampen the vector (same direction ~1/100 magnitude)
     slope.x /= 100;
     slope.y /= 100;
-    std::cerr << std::format("({}, {})", slope.x, slope.y) << std::endl;
     return slope;
 }
 

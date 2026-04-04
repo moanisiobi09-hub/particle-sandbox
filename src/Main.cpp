@@ -1,15 +1,18 @@
 #include <SFML/Graphics.hpp>
 #include "Handlers/ParticleArray.hpp"
 #include "Collidable/Fan.hpp"
+#include "Config/FrameCounter.hpp"
 #include "Config/Constants.hpp"
 #include <iostream>
 
 int main()
 {
     sf::RenderWindow window = sf::RenderWindow(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), "Particle Sandbox");
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(70);
 
     srand(time(0));
+
+    FrameCounter fpsTracker;
 
     std::vector<Fan> allFans;
 
@@ -46,7 +49,7 @@ int main()
 
         window.clear(sf::Color::Black);
 
-        //particleArray.checkCollisions();
+        particleArray.checkCollisions();
 
         particleArray.moveParticles();
 
@@ -57,6 +60,9 @@ int main()
             fan.applyForce(particleArray);
             window.draw(fan);
         }
+
+        fpsTracker.addFrame();
+        window.draw(fpsTracker);
 
         window.display();
     }
