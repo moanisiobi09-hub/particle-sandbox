@@ -4,6 +4,8 @@ namespace pm
 {
     float findXOnLine(std::pair<float, float> pointA, std::pair<float, float> pointB, float y)
     {
+        // handle vertical lines by returning the A x coord
+        if (pointA.first == pointB.first) return pointA.first;
         // find the slope of the line segment
         float slope = (pointA.second - pointB.second) / (pointA.first - pointB.first);
         // if the slope is 0 (horizontal line), use point A's x value
