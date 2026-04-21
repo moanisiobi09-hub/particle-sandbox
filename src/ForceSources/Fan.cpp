@@ -94,8 +94,6 @@ void Fan::draw(sf::RenderTarget &target, sf::RenderStates states) const
         target.draw(get<0>(figures), states);
         target.draw(get<1>(figures), states);
     }
-
-    if (stop) target.draw(DEBUG_points);
 }
 
 float Fan::findLineX(sf::Vector2f pointA, sf::Vector2f pointB, float y) const
@@ -168,106 +166,50 @@ int Fan::applyForce(ParticleArray &array) const
     auto By = [this](float y) {return findLineX(knob1Pos, knob1Ray, y);}; // the implied segment between knob1 and the end of the arrow coming off of it
     auto Cy = [this](float y) {return findLineX(knob2Pos, knob2Ray, y);}; // the implied segment between knob2 and the end of the arrow coming off of it
     auto Dy = [this](float y) {return findLineX(knob1Ray, knob2Ray, y);}; // the implied segment between the end of the top and bottom arrow tips
-    
-    // iterate through a section of the screen. we go from our highest y (least y), to the lowest (most y)
-    // addition considerations to avoid going out of bounds
-    int highestY = std::min({knob1Pos.y, knob2Pos.y, knob1Ray.y, knob2Ray.y}), lowestY = std::max({knob1Pos.y, knob2Pos.y, knob1Ray.y, knob2Ray.y});
-    for (int i = highestY; i <= std::min(lowestY, (int)array.screen.size() - 1); i++)
-    {
-        // iterate horizontally so that all checked points are in the box of effect for this Fan
-        int start = std::max(Ay(i), By(i)), end = std::min(Cy(i), Dy(i));
-        if (start > end) std::swap(start, end);
-        //std::cerr << std::format("START: {}, END:{}\n", start, end);
-        for (int j = std::max(start, 0); j <= std::min(end, (int)array.screen.at(i).size() - 1); j++)
-        {
-            try
-            {
-                if (array.screen.at(i).at(j) != nullptr) 
-                {
-                    array.screen.at(i).at(j)->push(forceVector);
-                    affectedCount++;
-                }
-            }
-            catch (std::out_of_range)
-            {
-                std::cerr << std::format("Ay({}) -> {}\nBy({}) -> {}", i, Ay(i), i, By(i)) << "\n";
-                std::cerr << std::format("Cy({}) -> {}\nDy({}) -> {}", i, Cy(i), i, Dy(i)) << "\n";
-                std::cerr << "HIGH: " << highestY << "\n";
-                std::cerr << std::format("I: {}, J: {}\n", i, j);
-                exit(1);
-            }
-        }
-    }
-    return affectedCount;
-}
-
-void Fan::DEBUG_stuff(sf::RenderTarget &target, ParticleArray &array)
-{
-    if (showMarker) return;
-    int affectedCount = 0;
-    
-    // define lambda functions to tell where the x would be for each segment at a given y
-    auto Ay = [this](float y) {return findLineX(knob1Pos, knob2Pos, y);}; // the green segment between the two knobs
-    auto By = [this](float y) {return findLineX(knob1Pos, knob1Ray, y);}; // the implied segment between knob1 and the end of the arrow coming off of it
-    auto Cy = [this](float y) {return findLineX(knob2Pos, knob2Ray, y);}; // the implied segment between knob2 and the end of the arrow coming off of it
-    auto Dy = [this](float y) {return findLineX(knob1Ray, knob2Ray, y);}; // the implied segment between the end of the top and bottom arrow tips
 
     // find the topmost and lowermost point in the figure (greater y means lower on screen)
-    int highestY = std::min({knob1Pos.y, knob2Pos.y, knob1Ray.y, knob2Ray.y}), lowestY = std::max({knob1Pos.y, knob2Pos.y, knob1Ray.y, knob2Ray.y});
+    int high = std::min({knob1Pos.y, knob2Pos.y, knob1Ray.y, knob2Ray.y}), low = std::max({knob1Pos.y, knob2Pos.y, knob1Ray.y, knob2Ray.y});
 
     // depending on the fan's orientation, different pairs of these segments
     // will need to be used for the scan-fill hitbox check. the below code
     // determines those pairs with function variables.
     std::function<float(float)> start_f;
     std::function<float(float)> end_f;
-    if ((int)knob2Pos.y == highestY)
+    if ((int)knob2Pos.y == high)
     {
-        std::cerr << "choice 1\n";
         start_f = [&Ay, &By](float y){return std::max(Ay(y), By(y));};
         end_f = [Cy, &Dy](float y){return std::min(Cy(y), Dy(y));};
     }
-    else if ((int)knob1Pos.y == highestY)
+    else if ((int)knob1Pos.y == high)
     {
-        std::cerr << "choice 2\n";
         start_f = [&By, &Dy](float y){return std::max(By(y), Dy(y));};
         end_f = [&Ay, &Cy](float y){return std::min(Ay(y), Cy(y));};
     }
-    else if ((int)knob1Ray.y == highestY)
+    else if ((int)knob1Ray.y == high)
     {
-        std::cerr << "choice 3\n";
         start_f = [&Dy, &Cy](float y){return std::max(Dy(y), Cy(y));};
         end_f = [&Ay, &By](float y){return std::min(Ay(y), By(y));};
     }
     else
     {
-        std::cerr << "choice 4\n";
         start_f = [&Cy, &Ay](float y){return std::max(Cy(y), Ay(y));};
         end_f = [&By, &Dy](float y){return std::min(By(y), Dy(y));};
     }
-    
     // iterate through a section of the screen. we go from our highest y (least y), to the lowest (most y)
     // addition considerations to avoid going out of bounds
-    for (int i = highestY; i <= std::min(lowestY, (int)array.screen.size() - 1); i++)
+    for (int i = high; i <= std::min(low, (int)array.screen.size() - 1); i++)
     {
         // iterate horizontally so that all checked points are in the box of effect for this Fan
         int start = start_f(i), end = end_f(i);
         if (start > end) std::swap(start, end);
-        //std::cerr << std::format("START: {}, END:{}\n", start, end);
         for (int j = std::max(start, 0); j <= std::min(end, (int)array.screen.at(i).size() - 1); j++)
         {
-            try
+            if (array.screen.at(i).at(j) != nullptr) 
             {
-                if (i % 10 == 0 && j % 10 == 0) DEBUG_points.append(sf::Vertex({j, i}));
-            }
-            catch (std::out_of_range)
-            {
-                std::cerr << std::format("Ay({}) -> {}\nBy({}) -> {}", i, Ay(i), i, By(i)) << "\n";
-                std::cerr << std::format("Cy({}) -> {}\nDy({}) -> {}", i, Cy(i), i, Dy(i)) << "\n";
-                std::cerr << "HIGH: " << highestY << "\n";
-                std::cerr << std::format("I: {}, J: {}\n", i, j);
-                exit(1);
+                array.screen.at(i).at(j)->push(forceVector);
+                affectedCount++;
             }
         }
     }
-    stop = true;
+    return affectedCount;
 }

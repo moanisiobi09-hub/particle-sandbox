@@ -1,5 +1,4 @@
 #include "ParticleArray.hpp"
-#include <iostream>
 
 ParticleArray::ParticleArray() : screen(SCREEN_HEIGHT, std::vector<std::shared_ptr<Particle>>(SCREEN_WIDTH, nullptr))
 {

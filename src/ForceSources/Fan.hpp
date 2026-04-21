@@ -6,7 +6,6 @@
 #include <SFML\Graphics.hpp>
 #include "..\Handlers\ParticleArray.hpp"
 #include "..\Config\PureFunctions.hpp"
-#include <iostream>
 #include <cmath>
 #include <tuple>
 
@@ -24,7 +23,6 @@ class Fan : public sf::Drawable, public sf::Transformable
 {
     private:
         sf::VertexArray DEBUG_points;
-        bool stop = false;
         float magnitude;
         bool showMarker; // whether or not the 'marker' is shown. to be active before knob2's position is defined
         static constexpr float KNOB_RADIUS = 10.f;
@@ -45,7 +43,6 @@ class Fan : public sf::Drawable, public sf::Transformable
         bool getShowMarker() const;
         // apply this fan's force vector to all the particles in its region. return how many particles were affected
         int applyForce(ParticleArray &array) const;
-        void DEBUG_stuff(sf::RenderTarget &target, ParticleArray &array);
 };
 
 #endif

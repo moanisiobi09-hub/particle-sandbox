@@ -47,8 +47,6 @@ int main()
 
         //particleArray.checkCollisions();
 
-        if (!fanList.empty()) fanList.listOfFans.at(0).DEBUG_stuff(window, particleArray);
-
         particleArray.moveParticles();
 
         particleArray.drawParticles(window);
@@ -62,15 +60,5 @@ int main()
 
         window.display();
     }
-    /* std::pair<float, float> pointA = {400 + 10, 300};
-    std::pair<float, float> pointB = {400 - 10, 300};
-    for (int i = 0; i <= 300; i++) {
-        pointA.second ++;
-        pointB.second --;
-        for (int y = 0; y <= SCREEN_HEIGHT; y++) {
-            if (pm::findXOnLine(pointA, pointB, y) >= 800 || pm::findXOnLine(pointA, pointB, y) < 0) std::cerr << std::format("({}, {}) + ({}, {}) + {} -> {}", pointA.first, pointA.second, pointB.first, pointB.second, y, pm::findXOnLine(pointA, pointB, y)) << "\n";
-        }
-    } */
-
     return 0;
 }
