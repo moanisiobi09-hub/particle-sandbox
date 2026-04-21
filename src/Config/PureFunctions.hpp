@@ -5,12 +5,13 @@
 #include <utility>
 #include <algorithm>
 #include <cmath>
+#include <functional>
 
 // pure math functions used for collision detection, force application, and other simulation purposes
 namespace pm
 {
     // given two points to form a line and a y-value on that line, find the corresponding x-value
-    float findXOnLine(std::pair<float, float> pointA, std::pair<float, float> pointB, float y);
+    int findXOnLine(std::pair<float, float> pointA, std::pair<float, float> pointB, float y);
 }
 
 #endif

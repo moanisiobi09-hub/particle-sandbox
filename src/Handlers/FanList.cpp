@@ -29,3 +29,8 @@ int FanList::applyForce(ParticleArray &particleArray) const
     }
     return affectedCount;
 }
+
+bool FanList::empty() const
+{
+    return listOfFans.empty();
+}
