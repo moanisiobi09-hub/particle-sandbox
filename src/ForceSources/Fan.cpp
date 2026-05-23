@@ -196,8 +196,8 @@ int Fan::applyForce(ParticleArray &array) const
         end_f = [&By, &Dy](float y){return std::min(By(y), Dy(y));};
     }
     // iterate through a section of the screen. we go from our highest y (least y), to the lowest (most y)
-    // addition considerations to avoid going out of bounds
-    for (int i = high; i <= std::min(low, (int)array.screen.size() - 1); i++)
+    // additional considerations to avoid going out of bounds
+    for (int i = std::max(0, high); i <= std::min(low, (int)array.screen.size() - 1); i++)
     {
         // iterate horizontally so that all checked points are in the box of effect for this Fan
         int start = start_f(i), end = end_f(i);
