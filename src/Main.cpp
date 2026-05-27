@@ -3,6 +3,7 @@
 #include "Handlers/FanList.hpp"
 #include "Config/FrameCounter.hpp"
 #include "Config/Constants.hpp"
+#include "Collidable/Borders.hpp"
 #include <iostream>
 
 int main()
@@ -11,6 +12,8 @@ int main()
     window.setFramerateLimit(70);
 
     srand(time(0));
+
+    Borders borders;
 
     FrameCounter fpsTracker;
 
@@ -54,6 +57,8 @@ int main()
         fanList.applyForce(particleArray);
 
         fanList.drawFans(window);
+
+        borders.applyForce(particleArray);
 
         fpsTracker.addFrame();
         window.draw(fpsTracker);
