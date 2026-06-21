@@ -17,6 +17,9 @@ namespace pm
 
     // given a circle (defined as center and radius) and a line segment (defined as two points) return if the line overlaps the circle
     bool circleAndLineCollide(std::pair<float, float> center, float radius, std::pair<float, float> pointA, std::pair<float, float> pointB);
+
+    // find the dot product of the inputed vectors
+    float dotProductOf(std::pair<float, float> v1, std::pair<float, float> v2);
 }
 
 #endif

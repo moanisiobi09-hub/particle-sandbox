@@ -60,4 +60,9 @@ namespace pm
         if (HtoCenterDist < std::hypot(posN.first - center.first, posN.second - center.second) || HtoCenterDist < std::hypot(negN.first - center.first, negN.second - center.second)) return true;
         return false;
     }
+    
+    float dotProductOf(std::pair<float, float> v1, std::pair<float, float> v2)
+    {
+        return (v1.first * v2.first) + (v1.second * v2.second);
+    }
 }

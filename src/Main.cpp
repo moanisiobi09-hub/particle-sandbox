@@ -48,7 +48,7 @@ int main()
 
         window.clear(sf::Color::Black);
 
-        //particleArray.checkCollisions();
+        particleArray.checkCollisions();
 
         particleArray.moveParticles();
 
